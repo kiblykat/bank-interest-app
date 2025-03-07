@@ -14,6 +14,3 @@ class Account:
             balance += txn.amount
             statement += f"| {txn.date}     | {txn.id}      | {txn.type} | {txn.amount} | {balance} | \n"
         return statement
-
-    def __str__(self):
-        return f"Account: {self.account}, Date: {self.date}, Type: {self.type}, Amount: {self.amount}"
