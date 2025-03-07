@@ -45,9 +45,17 @@ class Bank:
       except ValueError as e:
           print(f"Invalid input: {e}")
 
-  def print_statement():
+  def print_statement(self):
+    while True:
       print("Please enter account and month to generate the statement <Account> <Year><Month> (or enter blank to go back to main menu):")
-      account = input(">")
-  
-  def define_interest():
+      account_date = input(">")
+      if not account_date:
+        break
+      try:
+        account, date = account_date.split(" ")
+        print(account, date)
+      except ValueError as e:
+        print(f"Invalid input: {e}")
+        
+  def define_interest(self):
       return None
