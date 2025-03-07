@@ -1,6 +1,7 @@
 from classes.interest import define_interest
 from classes.account import Account
 from classes.transaction import Transaction
+import datetime
 
 
 class Bank:
@@ -52,10 +53,19 @@ class Bank:
       if not account_date:
         break
       try:
-        account, date = account_date.split(" ")
+        account, date_str = account_date.split(" ")
+        if not self.validate_date(date_str):
+          return
         print(self.accounts[account].generate_statement())
       except ValueError as e:
         print(f"Invalid input: {e}")
         
+  def validate_date(self, date_str):
+    try:
+      datetime.datetime.strptime(date_str, '%Y%m%d')
+      return True
+    except:
+      return False
+    
   def define_interest(self):
       return None
