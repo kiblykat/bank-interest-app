@@ -37,23 +37,33 @@ class Bank:
             ).strip()
             if not details:
                 break
+            parts = details.split()
+            if len(parts) != 4:  # check if valid input of 4 elements
+                print("Invalid input. Must be <Date> <Account> <Type> <Amount>.")
+                continue
             try:
-                date_str, account, type, amount = details.split()
-                if not self.validate_date(date_str):
-                    print("\nInvalid date format")
+                date_str, account, type_str, amount = details.split()
+                if not self.validate_date(date_str):  # check if valid date
+                    print("\nInvalid date format. Must be YYYYMMDD.")
                     continue
-                amount = float(amount)
+                type_str = type_str.upper()
+                if type_str not in ("D", "W"):  # check if valid type
+                    print("Invalid transaction type. Must be D or W.")
+                    continue
+                if amount <= 0:
+                    print("Amount must be greater than zero.")
+                amount = float(amount)  # check if valid number
                 if account not in self.accounts:
                     self.accounts[account] = Account(account)
                 transaction = Transaction(
-                    date_str, account, type, amount
+                    date_str, account, type_str, amount
                 )  # create new transaction object
                 self.accounts[account].add_transaction(
                     transaction
                 )  # add transaction to account
                 print(f"{account} \n {transaction}")
             except ValueError as e:
-                print(f"Invalid input: {e}")
+                print(f"Invalid amount. Must be a number")
 
     def print_statement(self):
         while True:
