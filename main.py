@@ -1,4 +1,4 @@
-from bank import Bank
+from classes.bank import Bank
 
 bank = Bank()
 bank.run()

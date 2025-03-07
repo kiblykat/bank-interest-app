@@ -1,6 +1,6 @@
-from interest import define_interest
-from account import Account
-from transaction import Transaction
+from classes.interest import define_interest
+from classes.account import Account
+from classes.transaction import Transaction
 
 
 class Bank:
@@ -46,7 +46,8 @@ class Bank:
           print(f"Invalid input: {e}")
 
   def print_statement():
-      return None
+      print("Please enter account and month to generate the statement <Account> <Year><Month> (or enter blank to go back to main menu):")
+      account = input(">")
   
   def define_interest():
       return None
