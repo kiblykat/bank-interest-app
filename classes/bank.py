@@ -32,18 +32,21 @@ class Bank:
 
     def input_transactions(self):
         while True:
-            transaction_details = input(
+            details = input(
                 "Please enter transaction details in <Date> <Account> <Type> <Amount> format (or enter blank to go back to main menu):\n> "
             ).strip()
-            if not transaction_details:
+            if not details:
                 break
             try:
-                date, account, type, amount = transaction_details.split()
+                date_str, account, type, amount = details.split()
+                if not self.validate_date(date_str):
+                    print("\nInvalid date format")
+                    continue
                 amount = float(amount)
                 if account not in self.accounts:
                     self.accounts[account] = Account(account)
                 transaction = Transaction(
-                    date, account, type, amount
+                    date_str, account, type, amount
                 )  # create new transaction object
                 self.accounts[account].add_transaction(
                     transaction
@@ -54,16 +57,16 @@ class Bank:
 
     def print_statement(self):
         while True:
-            print(
-                "Please enter account and month to generate the statement <Account> <Year><Month> (or enter blank to go back to main menu):"
-            )
-            account_date = input(">")
-            if not account_date:
+            details = input(
+                "Please enter account and month to generate the statement <Account> <Year><Month> (or enter blank to go back to main menu):\n> "
+            ).strip()
+            if not details:
                 break
             try:
-                account, date_str = account_date.split(" ")
+                account, date_str = details.split(" ")
                 if not self.validate_date(date_str):
-                    return
+                    print("\nInvalid date format")
+                    continue
                 print(self.accounts[account].generate_statement())
             except ValueError as e:
                 print(f"Invalid input: {e}")
