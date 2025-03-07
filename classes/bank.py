@@ -53,7 +53,7 @@ class Bank:
         break
       try:
         account, date = account_date.split(" ")
-        print(account, date)
+        print(self.accounts[account].generate_statement())
       except ValueError as e:
         print(f"Invalid input: {e}")
         
