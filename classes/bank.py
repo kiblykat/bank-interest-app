@@ -50,9 +50,9 @@ class Bank:
                 if type_str not in ("D", "W"):  # check if valid type
                     print("Invalid transaction type. Must be D or W.")
                     continue
+                amount = float(amount)  # check if valid number
                 if amount <= 0:
                     print("Amount must be greater than zero.")
-                amount = float(amount)  # check if valid number
                 if account not in self.accounts:
                     self.accounts[account] = Account(account)
                 transaction = Transaction(
@@ -74,7 +74,7 @@ class Bank:
                 break
             try:
                 account, date_str = details.split(" ")
-                if not self.validate_date(date_str):
+                if not datetime.datetime.strptime(date_str, "%Y%m"):
                     print("\nInvalid date format")
                     continue
                 print(self.accounts[account].generate_statement())
