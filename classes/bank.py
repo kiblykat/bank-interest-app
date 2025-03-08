@@ -7,6 +7,7 @@ import datetime
 class Bank:
     def __init__(self):
         self.accounts = {}  # {account_id: Account}
+        self.interest_rules = [] # Interest[]
 
     def run(self):
         while True:
@@ -89,7 +90,7 @@ class Bank:
             date_str, ruleId, rate_str = parts
             # validate date
             if not self.validate_date(date_str):
-                print("\nInvalid date format. Must be YYYYMM")
+                print("\nInvalid date format. Must be YYYYMMDD")
                 continue
             # validate rate_str is valid
             try:
@@ -100,7 +101,11 @@ class Bank:
             except ValueError:
                 print("Invalid rate, enter a value between 0 and 100.")
                 continue
-
+            self.interest_rules = [r for r in self.interest_rules if r.date != date_str]
+            self.interest_rules.append(Interest(date_str, ruleId, rate))
+            self.interest_rules.sort(key= lambda r:r.date)
+            for r in self.interest_rules:
+                print(r)
     def validate_date(self, date_str):
         try:
             datetime.datetime.strptime(date_str, "%Y%m%d")
