@@ -1,4 +1,4 @@
-from classes.interest import define_interest
+from classes.interest import Interest
 from classes.account import Account
 from classes.transaction import Transaction
 import datetime
@@ -7,6 +7,7 @@ import datetime
 class Bank:
     def __init__(self):
         self.accounts = {}  # {account_id: Account}
+        self.interest_rules = [] # Interest[]
 
     def run(self):
         while True:
@@ -20,7 +21,7 @@ class Bank:
             if choice == "T":
                 self.input_transactions()
             elif choice == "I":
-                self.define_interest()
+                self.input_interest()
             elif choice == "P":
                 self.print_monthly_statement()
             elif choice == "Q":
@@ -38,11 +39,11 @@ class Bank:
             if not details:
                 break
             parts = details.split()
-            if len(parts) != 4:  # check if valid input of 4 elements
+            if len(parts) != 4:  # validate  input of 4 elements
                 print("Invalid input. Must be <Date> <Account> <Type> <Amount>.")
                 continue
             date_str, account_id, type_str, amount_str = details.split()
-            # check if current account exists in bank, else create new one
+            # validate current account exists in bank, else create new one
             if account_id not in self.accounts:
                 self.accounts[account_id] = Account(account_id)
             success, message = self.accounts[account_id].add_transaction(
@@ -75,5 +76,39 @@ class Bank:
             except KeyError as e:
                 print(f"Account {account} not found")
 
-    def define_interest(self):
-        return None
+    def input_interest(self):
+        while True:
+            details = input(
+                "Please enter interest rules details in <Date> <RuleId> <Rate in %> format (or enter blank to go back to main menu):\n>"
+            )
+            if not details:
+                break
+            parts = details.split()
+            if len(parts) != 3:
+                print("Invalid input. Must be <Date> <RuleId> <Rate in %>.")
+                continue
+            date_str, ruleId, rate_str = parts
+            # validate date
+            if not self.validate_date(date_str):
+                print("\nInvalid date format. Must be YYYYMMDD")
+                continue
+            # validate rate_str is valid
+            try:
+                rate = float(rate_str)
+                if not (0 < rate < 100):
+                    print("Rate must be between 0 and 100.")
+                    continue
+            except ValueError:
+                print("Invalid rate, enter a value between 0 and 100.")
+                continue
+            self.interest_rules = [r for r in self.interest_rules if r.date != date_str]
+            self.interest_rules.append(Interest(date_str, ruleId, rate))
+            self.interest_rules.sort(key= lambda r:r.date)
+            for r in self.interest_rules:
+                print(r)
+    def validate_date(self, date_str):
+        try:
+            datetime.datetime.strptime(date_str, "%Y%m%d")
+            return True
+        except:
+            return False
