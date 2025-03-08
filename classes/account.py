@@ -1,4 +1,6 @@
+import datetime
 import calendar
+from classes.transaction import Transaction
 
 
 class Account:
@@ -6,14 +8,40 @@ class Account:
         self.account = account
         self.transactions = []
 
-    def add_transaction(self, transaction):
+    def add_transaction(self, date_str, account_id, type_str, amount_str):
+        try:
+            # check if valid date
+            if not self.validate_date(date_str):
+                return False, "Invalid date format. Must be YYYYMMDD."
+            type_str = type_str.upper()
+            # check if valid type
+            if type_str not in ("D", "W"):
+                return False, "Invalid transaction type. Must be D or W."
+            # check if valid amount
+            amount = float(amount_str)
+            if amount <= 0:
+                return False, "Amount must be greater than zero."
+            # --- INPUT D == DEPOSIT, W == WITHDRAW                 ---
+            # --- NEED TO CHECK IF FIRST INPUT IS WITHDRAW - reject ---
+            # --- NEED TO CHECK IF WITHDRAW > BALANCE      - reject ---
+
+            # create new transaction object
+            transaction = Transaction(date_str, account_id, type_str, amount)
+            # add transaction to specified account_id object
+            self.transactions.append(transaction)
+            # sort transactions by date
+            self.transactions.sort(key=lambda txn: txn.date)
+            # return success
+            return True, "Transaction added successfully"
+
+        except ValueError as e:
+            print(f"Invalid amount. Must be a number")
         self.transactions.append(transaction)  # utilizes Transaction class
 
     def generate_all_statements(self):
         statement = f"Account: {self.account} \n"
         statement += "| Date         | Txn Id       | Type | Amount | Balance | \n"
         balance = 0
-        self.transactions.sort(key=lambda txn: txn.date)
         for txn in self.transactions:
             balance += txn.amount
             statement += f"| {txn.date}     | {txn.id}      | {txn.type}    | {txn.amount}  | {balance} | \n"
@@ -42,3 +70,10 @@ class Account:
             if start_date <= txn.date <= end_date:
                 transactions.append(txn)
         return transactions
+
+    def validate_date(self, date_str):
+        try:
+            datetime.datetime.strptime(date_str, "%Y%m%d")
+            return True
+        except:
+            return False

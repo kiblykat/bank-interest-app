@@ -41,32 +41,17 @@ class Bank:
             if len(parts) != 4:  # check if valid input of 4 elements
                 print("Invalid input. Must be <Date> <Account> <Type> <Amount>.")
                 continue
-            try:
-                date_str, account, type_str, amount = details.split()
-                # check if valid date
-                if not self.validate_date(date_str):
-                    print("\nInvalid date format. Must be YYYYMMDD.")
-                    continue
-                type_str = type_str.upper()
-                # check if valid type
-                if type_str not in ("D", "W"):
-                    print("Invalid transaction type. Must be D or W.")
-                    continue
-                # check if valid amount
-                amount = float(amount)
-                if amount <= 0:
-                    print("Amount must be greater than zero.")
-                # check if current account exists in bank, else create new one
-                if account not in self.accounts:
-                    self.accounts[account] = Account(account)
-                # create new transaction object
-                transaction = Transaction(date_str, account, type_str, amount)
-                # add transaction to specified account object
-                self.accounts[account].add_transaction(transaction)
-                print(self.accounts[account].generate_all_statements())
-
-            except ValueError as e:
-                print(f"Invalid amount. Must be a number")
+            date_str, account_id, type_str, amount_str = details.split()
+            # check if current account exists in bank, else create new one
+            if account_id not in self.accounts:
+                self.accounts[account_id] = Account(account_id)
+            success, message = self.accounts[account_id].add_transaction(
+                date_str, account_id, type_str, amount_str
+            )
+            if success:
+                print(self.accounts[account_id].generate_all_statements())
+            else:
+                print(f"Error: {message}")
 
     def print_monthly_statement(self):
         while True:
@@ -86,13 +71,6 @@ class Bank:
                 print(self.accounts[account].generate_monthly_statement(year, month))
             except ValueError as e:
                 print(f"Invalid input: {e}")
-
-    def validate_date(self, date_str):
-        try:
-            datetime.datetime.strptime(date_str, "%Y%m%d")
-            return True
-        except:
-            return False
 
     def define_interest(self):
         return None
