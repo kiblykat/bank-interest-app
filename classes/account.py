@@ -1,5 +1,6 @@
 import datetime
 import calendar
+from collections import defaultdict
 from classes.transaction import Transaction
 
 
@@ -7,6 +8,7 @@ class Account:
     def __init__(self, account):
         self.account = account
         self.transactions = []  # Transaction[]
+        self.dates_counter = defaultdict(int)
 
     def add_transaction(self, date_str, account_id, type_str, amount_str):
         # check if valid date format
@@ -41,8 +43,11 @@ class Account:
             if balance < amount:
                 return False, "Insufficient funds. \n"
 
+        # increment date counter
+        self.dates_counter[date_str] += 1
+        txn_id = f"{date_str}-{self.dates_counter[date_str]:02d}"
         # create new transaction object
-        transaction = Transaction(date_str, account_id, type_str, amount)
+        transaction = Transaction(account_id, date_str, txn_id, type_str, amount)
         # add transaction to specified account_id object
         self.transactions.append(transaction)
         # sort transactions by date
@@ -52,27 +57,27 @@ class Account:
 
     def generate_all_statements(self):
         statement = f"Account: {self.account} \n"
-        statement += "| Date         | Txn Id       | Type | Amount | Balance | \n"
+        statement += "| Date         | Txn Id           | Type | Amount | Balance | \n"
         balance = 0
         for txn in self.transactions:
             if txn.type == "D":
                 balance += txn.amount
             else:
                 balance -= txn.amount
-            statement += f"| {txn.date}     | {txn.id}      | {txn.type}    | {txn.amount}  | {balance} | \n"
+            statement += f"| {txn.date}     | {txn.txn_id}      | {txn.type}    | {txn.amount}  | {balance} | \n"
         return statement
 
     def generate_monthly_statement(self, year, month):
 
         statement = f"Account: {self.account} \n"
-        statement += "| Date         | Txn Id      | Type | Amount | Balance | \n"
+        statement += "| Date         | Txn Id           | Type | Amount | Balance | \n"
         balance = 0
 
         monthly_transactions = self.get_transactions_in_month(year, month)
 
         for txn in monthly_transactions:
             balance += txn.amount
-            statement += f"| {txn.date}     | {txn.id}      | {txn.type}    | {txn.amount}  | {balance} | \n"
+            statement += f"| {txn.date}     | {txn.txn_id}      | {txn.type}    | {txn.amount}  | {balance} | \n"
         return statement
 
     def get_transactions_in_month(self, year, month):
