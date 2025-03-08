@@ -13,6 +13,7 @@ class Account:
         statement = f"Account: {self.account} \n"
         statement += "| Date         | Txn Id       | Type | Amount | Balance | \n"
         balance = 0
+        self.transactions.sort(key=lambda txn: txn.date)
         for txn in self.transactions:
             balance += txn.amount
             statement += f"| {txn.date}     | {txn.id}      | {txn.type}    | {txn.amount}  | {balance} | \n"
