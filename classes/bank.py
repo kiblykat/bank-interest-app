@@ -95,9 +95,11 @@ class Bank:
             try:
                 rate = float(rate_str)
                 if not (0 < rate < 100):
-                    return False, "Rate must be between 0 and 100."
+                    print("Rate must be between 0 and 100.")
+                    continue
             except ValueError:
-                return False, "Invalid rate."
+                print("Invalid rate, enter a value between 0 and 100.")
+                continue
 
     def validate_date(self, date_str):
         try:
