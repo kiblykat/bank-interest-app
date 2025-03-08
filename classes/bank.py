@@ -63,7 +63,8 @@ class Bank:
                 transaction = Transaction(date_str, account, type_str, amount)
                 # add transaction to specified account object
                 self.accounts[account].add_transaction(transaction)
-                print(f"{account} \n {transaction}")
+                print(self.accounts[account].generate_all_statements())
+
             except ValueError as e:
                 print(f"Invalid amount. Must be a number")
 

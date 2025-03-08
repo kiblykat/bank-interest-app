@@ -9,17 +9,26 @@ class Account:
     def add_transaction(self, transaction):
         self.transactions.append(transaction)  # utilizes Transaction class
 
+    def generate_all_statements(self):
+        statement = f"Account: {self.account} \n"
+        statement += "| Date         | Txn Id       | Type | Amount | Balance | \n"
+        balance = 0
+        for txn in self.transactions:
+            balance += txn.amount
+            statement += f"| {txn.date}     | {txn.id}      | {txn.type}    | {txn.amount}  | {balance} | \n"
+        return statement
+
     def generate_monthly_statement(self, year, month):
 
         statement = f"Account: {self.account} \n"
-        statement += "| Date     | Txn Id      | Type | Amount | Balance | \n"
+        statement += "| Date         | Txn Id      | Type | Amount | Balance | \n"
         balance = 0
 
         monthly_transactions = self.get_transactions_in_month(year, month)
 
         for txn in monthly_transactions:
             balance += txn.amount
-            statement += f"| {txn.date}     | {txn.id}      | {txn.type} | {txn.amount} | {balance} | \n"
+            statement += f"| {txn.date}     | {txn.id}      | {txn.type}    | {txn.amount}  | {balance} | \n"
         return statement
 
     def get_transactions_in_month(self, year, month):
