@@ -9,34 +9,34 @@ class Account:
         self.transactions = []
 
     def add_transaction(self, date_str, account_id, type_str, amount_str):
+        # check if valid date
+        if not self.validate_date(date_str):
+            return False, "Invalid date format. Must be YYYYMMDD. \n"
+        type_str = type_str.upper()
+        # check if valid type
+        if type_str not in ("D", "W"):
+            return False, "Invalid transaction type. Must be D or W. \n"
+        # check if valid number && amount > 0
         try:
-            # check if valid date
-            if not self.validate_date(date_str):
-                return False, "Invalid date format. Must be YYYYMMDD."
-            type_str = type_str.upper()
-            # check if valid type
-            if type_str not in ("D", "W"):
-                return False, "Invalid transaction type. Must be D or W."
-            # check if valid amount
-            amount = float(amount_str)
+            amount = round(float(amount_str), 2)
             if amount <= 0:
-                return False, "Amount must be greater than zero."
-            # --- INPUT D == DEPOSIT, W == WITHDRAW                 ---
-            # --- NEED TO CHECK IF FIRST INPUT IS WITHDRAW - reject ---
-            # --- NEED TO CHECK IF WITHDRAW > BALANCE      - reject ---
-
-            # create new transaction object
-            transaction = Transaction(date_str, account_id, type_str, amount)
-            # add transaction to specified account_id object
-            self.transactions.append(transaction)
-            # sort transactions by date
-            self.transactions.sort(key=lambda txn: txn.date)
-            # return success
-            return True, "Transaction added successfully"
-
+                return False, "Amount must be greater than zero. \n"
         except ValueError as e:
-            print(f"Invalid amount. Must be a number")
-        self.transactions.append(transaction)  # utilizes Transaction class
+            return False, "Invalid amount. Must be a number. \n"
+        if amount <= 0:
+            return False, "Amount must be greater than zero. \n"
+        # --- INPUT D == DEPOSIT, W == WITHDRAW                 ---
+        # --- NEED TO CHECK IF FIRST INPUT IS WITHDRAW - reject ---
+        # --- NEED TO CHECK IF WITHDRAW > BALANCE      - reject ---
+
+        # create new transaction object
+        transaction = Transaction(date_str, account_id, type_str, amount)
+        # add transaction to specified account_id object
+        self.transactions.append(transaction)
+        # sort transactions by date
+        self.transactions.sort(key=lambda txn: txn.date)
+        # return success
+        return True, "Transaction added successfully"
 
     def generate_all_statements(self):
         statement = f"Account: {self.account} \n"
