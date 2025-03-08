@@ -60,17 +60,20 @@ class Bank:
             ).strip()
             if not details:
                 break
+            account, year_month_str = details.split(" ")
             try:
-                account, year_month_str = details.split(" ")
                 # validate correct year_month_str input
                 if not datetime.datetime.strptime(year_month_str, "%Y%m"):
                     print("\nInvalid date format. Must be YYYYMM")
                     continue
                 year = int(year_month_str[:4])
                 month = int(year_month_str[4:6])
-                print(self.accounts[account].generate_monthly_statement(year, month))
             except ValueError as e:
                 print(f"Invalid input: {e}")
+            try:
+                print(self.accounts[account].generate_monthly_statement(year, month))
+            except KeyError as e:
+                print(f"Account {account} not found")
 
     def define_interest(self):
         return None
