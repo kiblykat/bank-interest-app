@@ -1,0 +1,12 @@
+i
+abc abc abc
+202512 abc 1000
+202512 abc abc
+
+P
+AC001 202504
+
+P
+AC002 202504
+
+Q
