@@ -22,7 +22,7 @@ class Bank:
             elif choice == "I":
                 self.define_interest()
             elif choice == "P":
-                self.print_statement()
+                self.print_monthly_statement()
             elif choice == "Q":
                 print("Thank you for banking with AwesomeGIC Bank.")
                 print("Have a nice day!")
@@ -43,29 +43,31 @@ class Bank:
                 continue
             try:
                 date_str, account, type_str, amount = details.split()
-                if not self.validate_date(date_str):  # check if valid date
+                # check if valid date
+                if not self.validate_date(date_str):
                     print("\nInvalid date format. Must be YYYYMMDD.")
                     continue
                 type_str = type_str.upper()
-                if type_str not in ("D", "W"):  # check if valid type
+                # check if valid type
+                if type_str not in ("D", "W"):
                     print("Invalid transaction type. Must be D or W.")
                     continue
-                amount = float(amount)  # check if valid number
+                # check if valid amount
+                amount = float(amount)
                 if amount <= 0:
                     print("Amount must be greater than zero.")
+                # check if current account exists in bank, else create new one
                 if account not in self.accounts:
                     self.accounts[account] = Account(account)
-                transaction = Transaction(
-                    date_str, account, type_str, amount
-                )  # create new transaction object
-                self.accounts[account].add_transaction(
-                    transaction
-                )  # add transaction to account
+                # create new transaction object
+                transaction = Transaction(date_str, account, type_str, amount)
+                # add transaction to specified account object
+                self.accounts[account].add_transaction(transaction)
                 print(f"{account} \n {transaction}")
             except ValueError as e:
                 print(f"Invalid amount. Must be a number")
 
-    def print_statement(self):
+    def print_monthly_statement(self):
         while True:
             details = input(
                 "Please enter account and month to generate the statement <Account> <Year><Month> (or enter blank to go back to main menu):\n> "
@@ -73,11 +75,14 @@ class Bank:
             if not details:
                 break
             try:
-                account, date_str = details.split(" ")
-                if not datetime.datetime.strptime(date_str, "%Y%m"):
-                    print("\nInvalid date format")
+                account, year_month_str = details.split(" ")
+                # validate correct year_month_str input
+                if not datetime.datetime.strptime(year_month_str, "%Y%m"):
+                    print("\nInvalid date format. Must be YYYYMM")
                     continue
-                print(self.accounts[account].generate_statement())
+                year = int(year_month_str[:4])
+                month = int(year_month_str[4:6])
+                print(self.accounts[account].generate_monthly_statement(year, month))
             except ValueError as e:
                 print(f"Invalid input: {e}")
 
