@@ -68,7 +68,6 @@ class Account:
         return statement
 
     def generate_monthly_statement(self, year, month):
-
         statement = f"Account: {self.account} \n"
         statement += "| Date         | Txn Id           | Type | Amount | Balance | \n"
         balance = 0
@@ -76,7 +75,10 @@ class Account:
         monthly_transactions = self.get_transactions_in_month(year, month)
 
         for txn in monthly_transactions:
-            balance += txn.amount
+            if txn.type == "D":
+                balance += txn.amount
+            else:
+                balance -= txn.amount
             statement += f"| {txn.date}     | {txn.txn_id}      | {txn.type}    | {txn.amount}  | {balance} | \n"
         return statement
 
