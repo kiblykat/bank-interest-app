@@ -6,14 +6,14 @@ from classes.transaction import Transaction
 class Account:
     def __init__(self, account):
         self.account = account
-        self.transactions = []
+        self.transactions = []  # Transaction[]
 
     def add_transaction(self, date_str, account_id, type_str, amount_str):
-        # check if valid date
+        # check if valid date format
         if not self.validate_date(date_str):
             return False, "Invalid date format. Must be YYYYMMDD. \n"
         type_str = type_str.upper()
-        # check if valid type
+        # check if valid type (D/W)
         if type_str not in ("D", "W"):
             return False, "Invalid transaction type. Must be D or W. \n"
         # check if valid number && amount > 0
@@ -25,9 +25,21 @@ class Account:
             return False, "Invalid amount. Must be a number. \n"
         if amount <= 0:
             return False, "Amount must be greater than zero. \n"
-        # --- INPUT D == DEPOSIT, W == WITHDRAW                 ---
-        # --- NEED TO CHECK IF FIRST INPUT IS WITHDRAW - reject ---
-        # --- NEED TO CHECK IF WITHDRAW > BALANCE      - reject ---
+        # check if first transaction is a withdrawal
+        if len(self.transactions) == 0 and type_str == "W":
+            return False, "First transaction cannot be a withdrawal. \n"
+        # check if withdraw > balance (before date of transaction)
+        if type_str == "W":
+            balance = 0
+            # find balance before date of transaction
+            for txn in self.transactions:
+                if txn.date <= date_str:
+                    if txn.type == "D":
+                        balance += txn.amount
+                    else:
+                        balance -= txn.amount
+            if balance < amount:
+                return False, "Insufficient funds. \n"
 
         # create new transaction object
         transaction = Transaction(date_str, account_id, type_str, amount)
@@ -43,7 +55,10 @@ class Account:
         statement += "| Date         | Txn Id       | Type | Amount | Balance | \n"
         balance = 0
         for txn in self.transactions:
-            balance += txn.amount
+            if txn.type == "D":
+                balance += txn.amount
+            else:
+                balance -= txn.amount
             statement += f"| {txn.date}     | {txn.id}      | {txn.type}    | {txn.amount}  | {balance} | \n"
         return statement
 
