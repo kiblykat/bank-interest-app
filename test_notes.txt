@@ -1,2 +1,5 @@
 check if generate statement sorted when input not sorted
 check W and D work properly
+
+
+need to combine validate_date in bank.py and account.py (DRY!!)
