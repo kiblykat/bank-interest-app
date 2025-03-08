@@ -3,3 +3,6 @@ class Interest:
         self.date = date
         self.ruleId = ruleId
         self.rate = rate
+
+    def __str__(self):
+        return f"{self.date} | {self.ruleId} | {self.rate} |"
