@@ -70,7 +70,7 @@ class Account:
     def generate_monthly_statement(self, year, month):
         statement = f"Account: {self.account} \n"
         statement += "| Date         | Txn Id           | Type | Amount | Balance | \n"
-        balance = 0
+        balance = self.get_balance_before_date(year, month)
 
         monthly_transactions = self.get_transactions_in_month(year, month)
 
@@ -82,6 +82,17 @@ class Account:
             statement += f"| {txn.date}     | {txn.txn_id}      | {txn.type}    | {txn.amount}  | {balance} | \n"
         return statement
 
+    def get_balance_before_date(self, year, month):
+        balance = 0
+        target_date = f"{year}{month:02}01"
+        for txn in self.transactions:
+            if txn.date < target_date:
+                if txn.type == "D":
+                    balance += txn.amount
+                else:
+                    balance -= txn.amount
+        return balance
+    
     def get_transactions_in_month(self, year, month):
         start_date = f"{year}{month:02}01"
         last_day = calendar.monthrange(year, month)[1]
