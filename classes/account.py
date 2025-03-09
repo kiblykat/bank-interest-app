@@ -105,9 +105,18 @@ class Account:
             daily_balance_dict[txn.date] = current_balance_2
 
         # array to hold all dates balance rule within the month
-        date_balance_rule_array = []
+        date_balance_rate_array = []
         for day in range(1, last_day + 1):
             date_str = f"{year}{month:02}{day:02}"
+            day_balance = daily_balance_dict.get(date_str)
+            applicable_rate = 0  # initialize rate to be 0 if no rule found before date
+            for rule in reversed(interest_rules):
+                if rule.date <= date_str:
+                    applicable_rate = rule
+                    break
+            date_balance_rate_array.append([date_str, day_balance, applicable_rate])
+
+        total_interest = 0
 
         return statement
 
