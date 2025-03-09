@@ -67,11 +67,12 @@ class Account:
             statement += f"| {txn.date}     | {txn.txn_id}      | {txn.type}    | {txn.amount}  | {balance} | \n"
         return statement
 
-    def generate_monthly_statement(self, year, month):
+    def generate_monthly_statement(self, year, month, interest_rules):
         statement = f"Account: {self.account} \n"
         statement += "| Date         | Txn Id           | Type | Amount | Balance | \n"
         balance = self.get_balance_before_date(year, month)
 
+        # get the transactions in requested month
         monthly_transactions = self.get_transactions_in_month(year, month)
 
         for txn in monthly_transactions:
@@ -80,6 +81,10 @@ class Account:
             else:
                 balance -= txn.amount
             statement += f"| {txn.date}     | {txn.txn_id}      | {txn.type}    | {txn.amount}  | {balance} | \n"
+
+        # --- CALCULATE INTEREST ---
+        # input: interest_rules[]:[Interest:{date, ruleId, rate}][], monthly_transactions[]:[Transaction:{account,date,txn_id,type,amount}][]
+        
         return statement
 
     def get_balance_before_date(self, year, month):
