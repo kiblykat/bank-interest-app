@@ -72,7 +72,7 @@ class Bank:
             except ValueError as e:
                 print(f"Invalid input: {e}")
             try:
-                print(self.accounts[account].generate_monthly_statement(year, month))
+                print(self.accounts[account].generate_monthly_statement(year, month, self.interest_rules))
             except KeyError as e:
                 print(f"Account {account} not found")
 
