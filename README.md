@@ -7,9 +7,9 @@ Ensure Python is installed on your system:
 
 1. Download and install Python from https://www.python.org/downloads/.
 2. git clone https://github.com/kiblykat/bank-interest-app.git
-3. cd simple-bank-app
+3. cd bank-interest-app
 4. python -m venv venv
-5. venv\Scripts\activate (activate virtual env for Windows)
+5. venv/Scripts/activate (activate virtual env for Windows)
 6. python src/main.py to run the environment
 
 ### Testing
@@ -19,5 +19,5 @@ Ensure Python is installed on your system:
 3. python -m pytest src/tests/test_bank.py -v
 
 ## Tech Stack
-Codebase: Python
-Testing: pytest
+- Codebase: Python
+- Testing: pytest
