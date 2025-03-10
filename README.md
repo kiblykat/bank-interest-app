@@ -19,5 +19,5 @@ Ensure Python is installed on your system:
 3. python -m pytest src/tests/test_bank.py -v
 
 ## Tech Stack
-Codebase: Python
-Testing: pytest
+- Codebase: Python
+- Testing: pytest
