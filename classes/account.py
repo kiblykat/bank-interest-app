@@ -96,28 +96,71 @@ class Account:
             day_transactions = [
                 txn for txn in monthly_transactions if txn.date == date_str
             ]
+            for txn in day_transactions:
+                print(f"txn is {txn}")
+
             # get current balance given multiple txn in a day
             for txn in day_transactions:
-                if txn.txn_id == "D":
+                if txn.type == "D":
                     current_balance_2 += txn.amount
                 else:
                     current_balance_2 -= txn.amount
-            daily_balance_dict[txn.date] = current_balance_2
+            daily_balance_dict[date_str] = current_balance_2
+        print(f"initial_balance is: {initial_balance}")  # correct = 500
+        print(
+            f"daily_balance_dict is: {daily_balance_dict}"
+        )  # wrong, should be all days in month
 
         # array to hold all dates balance rule within the month
         date_balance_rate_array = []
         for day in range(1, last_day + 1):
             date_str = f"{year}{month:02}{day:02}"
-            day_balance = daily_balance_dict.get(date_str)
+            day_balance = daily_balance_dict.get(date_str, 0)
             applicable_rate = 0  # initialize rate to be 0 if no rule found before date
             for rule in reversed(interest_rules):
                 if rule.date <= date_str:
-                    applicable_rate = rule
+                    applicable_rate = rule.rate
                     break
             date_balance_rate_array.append([date_str, day_balance, applicable_rate])
 
-        total_interest = 0
+        print(f"date_balance_rate_array: {date_balance_rate_array}")
 
+        annualized_interest = 0
+        curr_count = 1
+        for i in range(1, len(date_balance_rate_array)):
+            # if balance_today == balance_ytd && rate_today == balance_ytd
+            if (
+                date_balance_rate_array[i][1] == date_balance_rate_array[i - 1][1]
+                and date_balance_rate_array[i][2] == date_balance_rate_array[i - 1][2]
+            ):
+                curr_count += 1
+            else:
+                # calculate annualized_interest += days * curr_balance * rate
+                annualized_interest += (
+                    curr_count
+                    * date_balance_rate_array[i - 1][1]
+                    * (date_balance_rate_array[i - 1][2])
+                    / 100
+                )
+                print(
+                    f"annualized_interest at date {date_balance_rate_array[i][0]} is: {annualized_interest}"
+                )
+                print(f"curr_count is: {curr_count}")
+                print(f"curr_balance is: {date_balance_rate_array[i - 1][1]}")
+                print(f"rate is: {date_balance_rate_array[i - 1][2]}")
+                # reset curr_count = 1
+                curr_count = 1
+        annualized_interest += (
+            curr_count
+            * date_balance_rate_array[i - 1][1]
+            * (date_balance_rate_array[i - 1][2])
+            / 100
+        )
+
+        total_interest = round(annualized_interest / 365, 2)
+        print(
+            f"total interest end date at date {date_balance_rate_array[-1][0]} is: {total_interest}"
+        )
         return statement
 
     def get_balance_before_date(self, year, month):
