@@ -1,8 +1,5 @@
 import pytest
-from classes.bank import Bank
 from classes.account import Account
-from classes.interest import Interest
-from classes.transaction import Transaction
 
 
 class MockInterestRule:
