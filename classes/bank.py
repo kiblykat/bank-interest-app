@@ -1,3 +1,4 @@
+from utils.utils import validate_date
 from classes.interest import Interest
 from classes.account import Account
 from classes.transaction import Transaction
@@ -7,7 +8,7 @@ import datetime
 class Bank:
     def __init__(self):
         self.accounts = {}  # {account_id: Account}
-        self.interest_rules = [] # Interest[]
+        self.interest_rules = []  # Interest[]
 
     def run(self):
         while True:
@@ -72,7 +73,11 @@ class Bank:
             except ValueError as e:
                 print(f"Invalid input: {e}")
             try:
-                print(self.accounts[account].generate_monthly_statement(year, month, self.interest_rules))
+                print(
+                    self.accounts[account].generate_monthly_statement(
+                        year, month, self.interest_rules
+                    )
+                )
             except KeyError as e:
                 print(f"Account {account} not found")
 
@@ -89,7 +94,7 @@ class Bank:
                 continue
             date_str, ruleId, rate_str = parts
             # validate date
-            if not self.validate_date(date_str):
+            if not validate_date(date_str):
                 print("\nInvalid date format. Must be YYYYMMDD")
                 continue
             # validate rate_str is valid
@@ -103,12 +108,6 @@ class Bank:
                 continue
             self.interest_rules = [r for r in self.interest_rules if r.date != date_str]
             self.interest_rules.append(Interest(date_str, ruleId, rate))
-            self.interest_rules.sort(key= lambda r:r.date)
+            self.interest_rules.sort(key=lambda r: r.date)
             for r in self.interest_rules:
                 print(r)
-    def validate_date(self, date_str):
-        try:
-            datetime.datetime.strptime(date_str, "%Y%m%d")
-            return True
-        except:
-            return False

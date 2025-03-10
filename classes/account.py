@@ -1,4 +1,4 @@
-import datetime
+from utils.utils import validate_date
 import calendar
 from collections import defaultdict
 from classes.transaction import Transaction
@@ -12,7 +12,7 @@ class Account:
 
     def add_transaction(self, date_str, account_id, type_str, amount_str):
         # check if valid date format
-        if not self.validate_date(date_str):
+        if not validate_date(date_str):
             return False, "Invalid date format. Must be YYYYMMDD. \n"
         type_str = type_str.upper()
         # check if valid type (D/W)
@@ -165,10 +165,3 @@ class Account:
             if start_date <= txn.date <= end_date:
                 transactions.append(txn)
         return transactions
-
-    def validate_date(self, date_str):
-        try:
-            datetime.datetime.strptime(date_str, "%Y%m%d")
-            return True
-        except:
-            return False
