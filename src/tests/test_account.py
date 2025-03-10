@@ -14,44 +14,53 @@ def account():
     return Account("AC001")
 
 
-# add_transaction tests
+# -------------------------
+# Tests for add_transaction
+# -------------------------
 def test_invalid_date(account):
+    # Adding a transaction with an invalid date format.
     success, message = account.add_transaction("20250432", "AC001", "D", "100")
     assert success == False
     assert message == "Invalid date format. Must be YYYYMMDD. \n"
 
 
 def test_invalid_type_str(account):
+    # Adding a transaction with an invalid transaction type.
     success, message = account.add_transaction("20250101", "AC001", "A", "100")
     assert success == False
     assert message == "Invalid transaction type. Must be D or W. \n"
 
 
 def test_value_error(account):
+    # Adding a transaction with a non-numeric amount.
     success, message = account.add_transaction("20250101", "AC001", "D", "abc")
     assert success == False
     assert message == "Invalid amount. Must be a number. \n"
 
 
 def test_zero_amount(account):
+    # Adding a transaction with an amount of zero.
     success, message = account.add_transaction("20250101", "AC001", "D", "0")
     assert success == False
     assert message == "Amount must be greater than zero. \n"
 
 
 def test_negative_amount(account):
+    # Adding a transaction with a negative amount.
     success, message = account.add_transaction("20250101", "AC001", "D", "-100")
     assert success == False
     assert message == "Amount must be greater than zero. \n"
 
 
 def test_first_transaction_withdrawal(account):
+    # Test that the first transaction cannot be a withdrawal.
     success, message = account.add_transaction("20250101", "AC001", "W", "100")
     assert success == False
     assert message == "First transaction cannot be a withdrawal. \n"
 
 
 def test_withdrawal_exceeds_balance(account):
+    # Test that a withdrawal exceeding the account balance is not allowed.
     account.add_transaction("20250101", "AC001", "D", "100")
     success, message = account.add_transaction("20250102", "AC001", "W", "150")
     assert success == False
@@ -59,6 +68,7 @@ def test_withdrawal_exceeds_balance(account):
 
 
 def test_valid_deposit_and_withdrawal(account):
+    # Adding a valid deposit and a valid withdrawal.
     success, _ = account.add_transaction("20250101", "AC001", "D", "100")
     assert success == True
     success, message = account.add_transaction("20250102", "AC001", "W", "50")
@@ -67,6 +77,7 @@ def test_valid_deposit_and_withdrawal(account):
 
 
 def test_multiple_transactions_same_date(account):
+    # Multiple transactions on the same date and verify transaction IDs.
     date_str = "20250101"
     account.add_transaction(date_str, "AC001", "D", "100")
     account.add_transaction(date_str, "AC001", "D", "200")
@@ -78,6 +89,7 @@ def test_multiple_transactions_same_date(account):
 
 
 def test_withdrawal_before_deposit_date_insufficient(account):
+    # Test withdrawal attempt before a deposit date, which should fail due to insufficient funds.
     account.add_transaction("20250102", "AC001", "D", "100")
     success, message = account.add_transaction("20250101", "AC001", "W", "50")
     assert success == False
@@ -85,6 +97,7 @@ def test_withdrawal_before_deposit_date_insufficient(account):
 
 
 def test_generate_monthly_no_transactions(account):
+    # Generating a monthly statement when there are no transactions in the specified month.
     account.add_transaction("20221231", "AC001", "D", "1000")
     rule = MockInterestRule("20220101", 1.0)
     statement = account.generate_monthly_statement(2025, 1, [rule])
@@ -92,6 +105,7 @@ def test_generate_monthly_no_transactions(account):
 
 
 def test_generate_monthly_with_interest_change(account):
+    # Generating a monthly statement when interest rates change during the month.
     rules = [MockInterestRule("20250115", 2.0), MockInterestRule("20250120", 1.5)]
     account.add_transaction("20250110", "AC001", "D", "500")
     account.add_transaction("20250125", "AC001", "W", "200")
@@ -100,6 +114,7 @@ def test_generate_monthly_with_interest_change(account):
 
 
 def test_get_balance_before_date(account):
+    # Retrieving the account balance before a specific date.
     account.add_transaction("20221231", "AC001", "D", "500")
     account.add_transaction("20250101", "AC001", "D", "200")
     balance = account.get_balance_before_date(2025, 1)
@@ -107,11 +122,13 @@ def test_get_balance_before_date(account):
 
 
 def test_get_balance_no_prior_transactions(account):
+    # Retrieving the balance when there are no prior transactions.
     balance = account.get_balance_before_date(2025, 1)
     assert balance == 0
 
 
 def test_generate_all_statements(account):
+    # Generating a complete statement for all transactions.
     account.add_transaction("20250101", "AC001", "D", "100")
     account.add_transaction("20250102", "AC001", "W", "50")
     statement = account.generate_all_statements()
