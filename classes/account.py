@@ -64,7 +64,7 @@ class Account:
                 balance += txn.amount
             else:
                 balance -= txn.amount
-            statement += f"| {txn.date}     | {txn.txn_id}      | {txn.type}    | {txn.amount}  | {balance} | \n"
+            statement += f"| {txn.date}     | {txn.txn_id}      | {txn.type}    | {txn.amount:.2f}  | {balance:.2f} | \n"
         return statement
 
     def generate_monthly_statement(self, year, month, interest_rules):
@@ -81,7 +81,7 @@ class Account:
                 current_balance += txn.amount
             else:
                 current_balance -= txn.amount
-            statement += f"| {txn.date}     | {txn.txn_id}      | {txn.type}    | {txn.amount}  | {current_balance} | \n"
+            statement += f"| {txn.date}     | {txn.txn_id}      | {txn.type}    | {txn.amount:.2f}  | {current_balance:.2f} | \n"
 
         # --- CALCULATE INTEREST ---
         # input: interest_rules[]:[Interest:{date, ruleId, rate}][], monthly_transactions[]:[Transaction:{account,date,txn_id,type,amount}][]
@@ -145,7 +145,7 @@ class Account:
         )
 
         total_interest = round(annualized_interest / 365, 2)
-        statement += f"| {year}{month:02}{last_day:02}     |                  | I    | {total_interest}  | {current_balance + total_interest} | \n"
+        statement += f"| {year}{month:02}{last_day:02}     |                  | I    | {total_interest:.2f}  | {(current_balance + total_interest):.2f} | \n"
         return statement
 
     def get_balance_before_date(self, year, month):
