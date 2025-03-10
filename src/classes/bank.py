@@ -109,5 +109,7 @@ class Bank:
             self.interest_rules = [r for r in self.interest_rules if r.date != date_str]
             self.interest_rules.append(Interest(date_str, ruleId, rate))
             self.interest_rules.sort(key=lambda r: r.date)
+            print("Interest Rules \n")
+            print("| Date     | RuleId | Rate (%) |")
             for r in self.interest_rules:
                 print(r)

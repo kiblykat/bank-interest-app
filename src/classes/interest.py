@@ -5,4 +5,4 @@ class Interest:
         self.rate = rate
 
     def __str__(self):
-        return f"{self.date} | {self.ruleId} | {self.rate} |"
+        return f"| {self.date} | {self.ruleId} | {self.rate:.2f}     |"
