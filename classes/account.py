@@ -84,11 +84,11 @@ class Account:
             statement += f"| {txn.date}     | {txn.txn_id}      | {txn.type}    | {txn.amount:.2f}  | {current_balance:.2f} | \n"
 
         # --- CALCULATE INTEREST ---
-        # input: interest_rules[]:[Interest:{date, ruleId, rate}][], monthly_transactions[]:[Transaction:{account,date,txn_id,type,amount}][]
         daily_balance_dict = defaultdict(int)
         last_day = calendar.monthrange(year, month)[1]
 
-        current_balance_2 = initial_balance
+        # reset current balance for interest calculation
+        current_balance = initial_balance
         # populate the daily_balance_dict dictionary {[key:date_str]:balance}
         for day in range(1, last_day + 1):
             date_str = f"{year}{month:02}{day:02}"
@@ -100,10 +100,10 @@ class Account:
             # get current balance given multiple txn in a day
             for txn in day_transactions:
                 if txn.type == "D":
-                    current_balance_2 += txn.amount
+                    current_balance += txn.amount
                 else:
-                    current_balance_2 -= txn.amount
-            daily_balance_dict[date_str] = current_balance_2
+                    current_balance -= txn.amount
+            daily_balance_dict[date_str] = current_balance
 
         # array to hold all dates balance rule within the month
         date_balance_rate_array = []
@@ -120,22 +120,18 @@ class Account:
         annualized_interest = 0
         curr_count = 1
         for i in range(1, len(date_balance_rate_array)):
-            # if balance_today == balance_ytd && rate_today == balance_ytd
-            if (
-                date_balance_rate_array[i][1] == date_balance_rate_array[i - 1][1]
-                and date_balance_rate_array[i][2] == date_balance_rate_array[i - 1][2]
-            ):
+            # Check if current balance and rate match previous day
+            curr_balance = date_balance_rate_array[i][1]
+            prev_balance = date_balance_rate_array[i - 1][1]
+            curr_rate = date_balance_rate_array[i][2]
+            prev_rate = date_balance_rate_array[i - 1][2]
+
+            if curr_balance == prev_balance and curr_rate == prev_rate:
                 curr_count += 1
             else:
-                # calculate annualized_interest += days * curr_balance * rate
-                annualized_interest += (
-                    curr_count
-                    * date_balance_rate_array[i - 1][1]
-                    * (date_balance_rate_array[i - 1][2])
-                    / 100
-                )
-                # reset curr_count = 1
-                curr_count = 1
+                # Calculate interest for the streak of identical balance/rate days
+                annualized_interest += curr_count * prev_balance * prev_rate / 100
+                curr_count = 1  # reset count
 
         annualized_interest += (
             curr_count
