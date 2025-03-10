@@ -1,5 +1,5 @@
 check if generate statement sorted when input not sorted
 check W and D work properly
-
+new interest rate should overwrite old one
 
 need to combine validate_date in bank.py and account.py (DRY!!)
