@@ -53,7 +53,7 @@ class Account:
         # sort transactions by date
         self.transactions.sort(key=lambda txn: txn.date)
         # return success
-        return True, "Transaction added successfully"
+        return True, "Transaction added successfully \n"
 
     def generate_all_statements(self):
         statement = f"Account: {self.account} \n"
